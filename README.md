@@ -18,22 +18,6 @@ This repository covers skills for:
 - **Collaboration**: Working effectively in teams.
 - **Observability**: Implementing logging, lineage, and monitoring.
 
-## 📂 Repository Structure
-
-The skills are organized by topic. Each top-level folder corresponds to a domain of MLOps.
-
-```bash
-.
-├── mlops-initialization/  # Initialization skills
-├── mlops-prototyping/     # Prototyping skills
-├── mlops-industrialization/ # Industrialization skills
-├── mlops-validation/      # Validation skills
-├── mlops-automation/      # Automation skills
-├── mlops-collaboration/   # Collaboration skills
-├── mlops-observability/   # Observability skills
-└── README.md
-```
-
 ## 🛠️ Installation & Usage
 
 ### Recommended Setup (Symlinks)
