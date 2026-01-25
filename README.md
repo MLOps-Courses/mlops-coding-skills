@@ -68,7 +68,7 @@ The **Gemini CLI** manages skills in `.gemini/skills`. We recommend installing t
 This command installs the skills into your current workspace scope.
 
 ```bash
-gemini skill install https://github.com/MLOps-Courses/mlops-coding-skills
+gemini skill install https://github.com/MLOps-Courses/mlops-coding-skills --scope=workspace
 ```
 
 *See [Gemini CLI Skills Docs](https://geminicli.com/docs/cli/skills/) for more details.*
