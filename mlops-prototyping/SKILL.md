@@ -1,5 +1,5 @@
 ---
-name: MLOps Prototyping
+name: mlops-prototyping
 description: Guide to create structured, reproducible Jupyter notebooks for MLOps prototyping, emphasizing configuration management and pipeline integrity.
 ---
 

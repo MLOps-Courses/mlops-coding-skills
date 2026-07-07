@@ -1,0 +1,14 @@
+# https://lefthook.dev
+# Thin hooks: every command delegates to a `mise run` task so hooks and CI stay identical.
+
+pre-commit:
+  parallel: false
+  commands:
+    format:
+      priority: 1
+      glob: "*.{json,jsonc,md,toml,yaml,yml}"
+      run: mise run format
+      stage_fixed: true
+    check:
+      priority: 2
+      run: mise run check

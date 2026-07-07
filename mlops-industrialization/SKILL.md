@@ -1,5 +1,5 @@
 ---
-name: MLOps Industrialization
+name: mlops-industrialization
 description: Guide to transform prototypes into robust, distributable Python packages using the src layout, hybrid paradigm, and strict configuration management.
 ---
 

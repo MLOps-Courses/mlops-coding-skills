@@ -1,5 +1,5 @@
 ---
-name: MLOps Validation
+name: mlops-validation
 description: Guide to implement rigorous validation layers including static analysis, automated testing, structured logging, and security scanning.
 ---
 
@@ -22,7 +22,7 @@ To ensure software quality, reliability, and security through automated validati
 Catch errors before they run.
 
 1. **Typing**:
-    - **Tool**: `ty`.
+    - **Tool**: `ty` (Astral type checker; pre-1.0, pin a compatible range). The mandated checker — do not use `mypy`.
     - **Rule**: No `Any` (unless absolutely necessary). Fully typed function signatures.
     - **DataFrames**: Use `pandera` schemas to validate DataFrame structures/types.
     - **Classes**: Use `pydantic` for data modeling and runtime validation.
@@ -69,9 +69,10 @@ Enable observability and debugging.
 
 Protect the supply chain and runtime.
 
-1. **Dependencies**: Use `GitHub Dependabot` to patch vulnerable packages.
-2. **Code Scanning**: Run `bandit` to detect hardcoded secrets or unsafe patterns (e.g., `eval`, `yaml.load`).
-3. **Secrets**: **NEVER** log secrets. Sanitize outputs.
+1. **Code Scanning**: Enable Ruff `S` (flake8-bandit) rules to detect unsafe patterns (e.g., `eval`, `yaml.load`) — this replaces standalone `bandit`.
+1. **Dependencies**: Run `pip-audit` (and/or `GitHub Dependabot`) to patch vulnerable packages.
+1. **Secret Scanning**: Run `gitleaks` to keep credentials out of the code and git history.
+1. **Secrets**: **NEVER** log secrets. Sanitize outputs.
 
 ## Self-Correction Checklist
 
@@ -79,4 +80,4 @@ Protect the supply chain and runtime.
 - [ ] **Lint Cleanliness**: Does `ruff check` pass?
 - [ ] **Test Discovery**: Does `pytest` successfully find modules in `src/`?
 - [ ] **Log Format**: Are production logs serializing to JSON?
-- [ ] **Security**: Has `bandit` scanned the codebase?
+- [ ] **Security**: Do Ruff `S` rules, `pip-audit`, and `gitleaks` pass?

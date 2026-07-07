@@ -1,0 +1,63 @@
+# https://mise.jdx.dev
+# Canonical task vocabulary shared by git hooks (lefthook) and CI (GitHub Actions).
+
+[tools]
+dprint = "latest"
+gitleaks = "latest"
+lefthook = "latest"
+
+# INSTALL
+
+[tasks.install]
+alias = "i"
+description = "Install git hooks (lefthook)"
+run = "lefthook install"
+
+# FORMAT
+
+[tasks.format]
+alias = "f"
+description = "Format JSON, Markdown, TOML, YAML (dprint)"
+run = "dprint fmt"
+
+# CHECK
+
+[tasks.check]
+alias = "c"
+description = "Run all static checks"
+depends = ["check:format", "check:leaks", "check:frontmatter"]
+
+[tasks."check:format"]
+description = "Check formatting of JSON, Markdown, TOML, YAML (dprint)"
+run = "dprint check"
+
+[tasks."check:leaks"]
+description = "Audit git history for leaked secrets (gitleaks)"
+run = "gitleaks git --verbose"
+
+[tasks."check:frontmatter"]
+description = "Assert each SKILL.md frontmatter name is slug-cased and matches its folder"
+run = """
+status=0
+for dir in mlops-*/; do
+  folder=${dir%/}
+  skill="$folder/SKILL.md"
+  if [ ! -f "$skill" ]; then
+    echo "MISSING: $skill"
+    status=1
+    continue
+  fi
+  # Read the frontmatter `name:` value (first match), trimming surrounding whitespace.
+  name=$(awk -F':[[:space:]]*' '/^name:/ {print $2; exit}' "$skill" | sed 's/[[:space:]]*$//')
+  if ! printf '%s' "$name" | grep -Eq '^[a-z0-9-]+$'; then
+    echo "INVALID: '$name' in $skill must match ^[a-z0-9-]+\\$"
+    status=1
+  elif [ "$name" != "$folder" ]; then
+    echo "MISMATCH: name '$name' != folder '$folder' in $skill"
+    status=1
+  else
+    echo "OK: $folder"
+  fi
+done
+exit $status
+"""

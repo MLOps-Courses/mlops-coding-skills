@@ -1,0 +1,21 @@
+# https://git-scm.com/docs/gitignore
+
+# Editor
+.DS_Store
+/.idea/
+/.vscode/
+
+# Node (dprint plugins, tooling)
+node_modules/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Docs / site
+/site/
+
+# Tools
+.mise/
+.trivy/

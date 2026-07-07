@@ -1,5 +1,5 @@
 ---
-name: MLOps Observability
+name: mlops-observability
 description: Guide to implement full stack observability including reproducibility, lineage, monitoring, alerting, and explainability.
 ---
 
@@ -23,7 +23,7 @@ Consistency is key. For instance:
 
 1. **Randomness**: Set seeds for `random`, `numpy`, `torch`, `tensorflow`.
 2. **Environment**: Use `docker` and locked dependencies (`uv.lock`).
-3. **Builds**: Use `justfile` with `uv build --build-constraint` for deterministic wheels.
+3. **Builds**: Use `mise run build` (wrapping `uv build --build-constraint`) for deterministic wheels.
 4. **Code**: Track git commit hash for every run.
 
 ### 2. Track Data Lineage
@@ -39,7 +39,7 @@ Know the origin of your data. For instance:
 
 Watch for silent failures. For instance:
 
-1. **Validation**: Use `MLflow Evaluate` to gate models against quality thresholds.
+1. **Validation**: Gate models against quality thresholds with `mlflow.validate_evaluation_results` (MLflow 3).
 2. **Drift**: Use `evidently` to compare `reference` (training) vs `current` (production) data.
     - Detect Data Drift (input distribution changes) and Concept Drift (relationship changes).
 3. **System**: Enable MLflow System Metrics (`log_system_metrics=True`) for CPU/GPU.

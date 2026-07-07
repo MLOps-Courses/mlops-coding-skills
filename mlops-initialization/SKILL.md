@@ -1,5 +1,5 @@
 ---
-name: MLOps Initialization
+name: mlops-initialization
 description: Guide to initialize a new MLOps project with standard tools (uv, git, VS Code) and best practices.
 ---
 
@@ -11,7 +11,7 @@ To initialize a robust, production-ready MLOps project structure using the moder
 
 ## Prerequisites
 
-- **Language**: Python (latest stable version recommended)
+- **Language**: Python 3.14 (latest stable)
 - **Manager**: `uv` (replaces pip, venv, poetry, pyenv)
 - **VCS**: Git
 - **IDE**: VS Code (recommended)
@@ -39,7 +39,7 @@ Initialize the project structure using `uv` to ensure modern standards (`pyproje
     - This creates `pyproject.toml`, `.python-version`, and a basic `hello.py`.
 3. **Configure `pyproject.toml`**:
     - Update **metadata**: `name`, `version`, `description`, `authors`, `license`.
-    - Set **requires-python**: Ensure it matches the project's target environment (e.g., `>=3.10`).
+    - Set **requires-python**: Ensure it matches the project's target environment (e.g., `>=3.14`).
     - **Example Structure**:
 
         ```toml
@@ -48,11 +48,11 @@ Initialize the project structure using `uv` to ensure modern standards (`pyproje
         version = "0.1.0"
         description = "A robust MLOps project."
         readme = "README.md"
-        requires-python = ">=3.11"
+        requires-python = ">=3.14"
         license = { file = "LICENSE" }
         authors = [{ name = "Your Name", email = "your.email@example.com" }]
         dependencies = [
-            "pandas>=2.2.0",
+            "pandas>=2.3.0",
             "loguru>=0.7.0",
             # Add other runtime dependencies here
         ]
@@ -61,16 +61,17 @@ Initialize the project structure using `uv` to ensure modern standards (`pyproje
         Repository = "https://github.com/username/my-mlops-project"
         Documentation = "https://username.github.io/my-mlops-project"
 
-        [project.optional-dependencies]
+        # PEP 735 dependency groups (not shipped with the package).
+        [dependency-groups]
         dev = [
-            "pytest>=8.0.0",
-            "ruff>=0.3.0",
-            "mypy>=1.9.0",
+            "pytest>=9.0.0",
+            "ruff>=0.15.0",
+            "ty>=0.0.56,<0.1", # pre-1.0: pin a compatible range
         ]
 
         [build-system]
-        requires = ["hatchling"]
-        build-backend = "hatchling.build"
+        requires = ["uv_build>=0.9.0"]
+        build-backend = "uv_build"
         ```
 
 ### 3. Dependency Management
@@ -81,8 +82,8 @@ Establish a clean separation between production and development dependencies.
     - Use `uv add <package>` for libraries needed in production (e.g., `fastapi`, `numpy`, `torch`).
     - These go into `[project.dependencies]` in `pyproject.toml`.
 2. **Add Dev Dependencies** (Development):
-    - Use `uv add --dev <package>` (or `--group dev`) for tools like `pytest`, `ruff`, `pre-commit`.
-    - These go into `[project.optional-dependencies]` and are kept separate from production builds.
+    - Use `uv add --dev <package>` (or `--group dev`) for tools like `pytest`, `ruff`, `ty`.
+    - These go into `[dependency-groups]` (PEP 735) and are kept out of production builds.
 3. **Sync Environment**:
     - Run `uv sync` to resolve dependencies, create the `.venv`, and generate the `uv.lock` file.
     - **Critical**: The `uv.lock` file pins exact versions of all dependencies (including transitive ones). It ensures that every developer and CI/CD pipeline uses the exact same environment, preventing "it works on my machine" issues. Commit this file to git.
@@ -98,7 +99,7 @@ Set up a clean repository and ensure unwanted files are ignored.
     - Write a robust `.gitignore` tailored for Python/MLOps.
     - **Must Include**:
         - Environment: `.venv/`, `.env`
-        - Caches: `__pycache__/`, `.pytest_cache/`, `.ruff_cache/`, `.mypy_cache/`
+        - Caches: `__pycache__/`, `.pytest_cache/`, `.ruff_cache/`, `.ty_cache/`
         - Builds: `dist/`, `build/`, `*.egg-info/`
         - Data/Models: `data/`, `models/`, `outputs/` (unless using DVC/LFS)
         - IDE: `.vscode/` (selectively), `.idea/`, `.DS_Store`
@@ -111,7 +112,7 @@ Set up a clean repository and ensure unwanted files are ignored.
 Standardize the developer experience (DX) by committing project-specific settings.
 
 1. **Install Recommended Extensions**:
-    - **Python Tier A**: `ms-python.python`, `headers.ruff`, `ms-python.vscode-pylance`, `ms-toolsai.jupyter`.
+    - **Python Tier A**: `ms-python.python`, `charliermarsh.ruff`, `ms-python.vscode-pylance`, `ms-toolsai.jupyter`.
     - **Productivity**: `eamodio.gitlens`, `alefragnani.project-manager`, `usernamehw.errorlens`.
 2. **Create `.vscode` Directory**:
     - `mkdir .vscode`
