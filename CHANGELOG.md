@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## [2.0.0] - 2026-08-10
+
+### 🚀 Features
+
+- [**breaking**] Describe the stack that exists and gate this repository like one (#1)
+
+### 🧹 Miscellaneous
+
+- Format changelog with dprint
+
 ## [1.0.0] - 2026-07-07
 
 ### 🚀 Features
