@@ -7,28 +7,31 @@ Thank you for your interest in contributing to the **MLOps Coding Skills** repos
 We accept several types of contributions:
 
 1. **New Skills**: Adding new MLOps patterns or tools.
-2. **Improvements**: Enhancing existing skills with better instructions or examples.
-3. **Bug Fixes**: Correcting errors in the documentation or logic.
+1. **Improvements**: Enhancing existing skills with better instructions or examples.
+1. **Bug Fixes**: Correcting errors in the documentation or logic.
 
 ### Process
 
 1. **Fork the repository** to your GitHub account.
-2. **Clone your fork** locally.
-3. **Create a branch** for your feature or fix (`git checkout -b feature/amazing-skill`).
-4. **Make your changes**. Ensure you follow the existing structure (SkillName/SKILL.md).
-5. **Commit your changes** with a descriptive message.
-6. **Push to your branch**.
-7. **Open a Pull Request** against the `main` branch of this repository.
+1. **Clone your fork** locally, then install the toolchain and git hooks: `mise install && mise run install`.
+1. **Create a branch** named `<type>/<slug>`, where `<type>` is a Conventional Commits type (`git switch -c feat/mlops-serving`).
+1. **Make your changes**. Each skill lives in its own folder as `mlops-<topic>/SKILL.md`, and the frontmatter `name` must equal the folder name.
+1. **Run the gate**: `mise run all` (format, then check). It must pass before you open a pull request — CI runs that exact task and nothing else.
+1. **Commit your changes** using [Conventional Commits](https://www.conventionalcommits.org) (`feat:`, `fix:`, `docs:`, `chore:`), so `git-cliff` can generate the changelog.
+1. **Push to your branch**.
+1. **Open a Pull Request** against the `main` branch of this repository.
 
 ## 📝 Style Guide
 
 When writing **Agent Skills** (`SKILL.md`), please follow these guidelines:
 
-- **Clear Title**: Use a descriptive H1 title.
-- **Role Definition**: Clearly state what the AI should do (e.g., "You are an expert in...").
-- **Instruction Steps**: Use numbered lists for sequential steps.
-- **Code Examples**: Provide copy-pasteable code blocks in the appropriate language.
-- **Markdown**: Use standard Markdown formatting.
+- **Frontmatter**: `name` matches `^[a-z0-9-]+$` and equals the folder name; `description` states the capability and the trigger (`<capability>. Use when <trigger>.`) in 240 characters or fewer, because hosts route on the name and description alone; `license: MIT`; and a `metadata` block with `author`, `source`, `created`, and `updated`.
+- **Clear Title**: Use a descriptive H1 title, followed by a `## Goal` and a `## Prerequisites` section.
+- **Instruction Steps**: Use ordered lists for sequential steps, and write every marker as `1.` so renumbering stays automatic.
+- **Self-Correction Checklist**: End with a checklist an agent can verify against a real repository.
+- **Code Examples**: Provide copy-pasteable code blocks, each with a language identifier.
+- **Markdown**: `dprint` is authoritative; run `mise run format` and never hand-wrap paragraphs (`textWrap: never`).
+- **Ground it in reality**: every command, file path, and version in a skill must exist in the reference implementation ([mlops-python-package](https://github.com/fmind/mlops-python-package)). A plausible-sounding instruction that does not work is worse than no instruction.
 
 ## 🐛 Reporting Bugs
 

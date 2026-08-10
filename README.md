@@ -17,7 +17,7 @@ Each skill derives from one chapter of the [MLOps Coding Course](https://mlops-c
 | `mlops-initialization`    | 1. Initializing    | Set up a robust project structure with `uv`, `git`, and VS Code.            |
 | `mlops-prototyping`       | 2. Prototyping     | Write clean, reproducible Jupyter notebooks and prevent data leakage.       |
 | `mlops-industrialization` | 3. Productionizing | Turn prototypes into a distributable package (src layout, hybrid paradigm). |
-| `mlops-validation`        | 4. Validating      | Add typing (`ty`), linting (`ruff`), testing (`pytest`), and logging.       |
+| `mlops-validation`        | 4. Validating      | Add typing (`ty`), linting (`ruff`), testing (`pytest`), logging, scans.    |
 | `mlops-automation`        | 5. Refining        | Automate tasks, containers, CI/CD, and experiment tracking (MLflow).        |
 | `mlops-collaboration`     | 6. Sharing         | Prepare the project for sharing: license, docs, templates, releases.        |
 | `mlops-observability`     | 7. Observability   | Add reproducibility, lineage, monitoring, alerting, and explainability.     |
@@ -91,6 +91,16 @@ _See [GitHub Copilot Agent Skills](https://docs.github.com/en/copilot/concepts/a
 
 ## 🤝 Contributing
 
-We welcome contributions! If you have a new MLOps pattern or improvement, please open a Pull Request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`AGENTS.md`](AGENTS.md) for the repository conventions and local checks (`mise run format`, `mise run check`).
+We welcome contributions! If you have a new MLOps pattern or improvement, please open a Pull Request.
+
+Install the pinned toolchain and git hooks once with `mise install && mise run install`, then run the gate before pushing:
+
+```bash
+mise run all # format, then check — CI runs this exact task and nothing else
+```
+
+`mise run check` covers formatting (`dprint`), workflow linting (`actionlint`, `zizmor`), secret scanning (`gitleaks`), a filesystem scan (`trivy`), the frontmatter rule (`name` equals the folder name), and validation against the Agent Skills specification (`gh skill publish --dry-run`).
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`AGENTS.md`](AGENTS.md) for the repository conventions.
 
 Happy Coding! 🤖✨

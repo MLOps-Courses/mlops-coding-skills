@@ -1,15 +1,37 @@
 # https://mise.jdx.dev
 # Canonical task vocabulary shared by git hooks (lefthook) and CI (GitHub Actions).
 
+[settings.task]
+# Tasks must fail loudly on a missing tool rather than silently installing one mid-run:
+# `mise install` is the explicit step, so hooks and CI never race an unpinned download.
+run_auto_install = false
+
 [tools]
+actionlint = "latest"
 dprint = "latest"
+gh = "latest"
+git-cliff = "latest"
 gitleaks = "latest"
 lefthook = "latest"
+trivy = "latest"
+zizmor = "latest"
+
+# ALL
+
+[tasks.all]
+alias = "a"
+description = "Format and check the repository (the canonical gate)"
+# There is no application code here, so the gate stops at format + check: no test, no build.
+run = ["mise run format", "mise run check"]
 
 # INSTALL
 
 [tasks.install]
 alias = "i"
+description = "Install git hooks (lefthook)"
+depends = ["install:hooks"]
+
+[tasks."install:hooks"]
 description = "Install git hooks (lefthook)"
 run = "lefthook install"
 
@@ -17,6 +39,10 @@ run = "lefthook install"
 
 [tasks.format]
 alias = "f"
+description = "Format all documents and configuration"
+run = ["mise run format:dprint"]
+
+[tasks."format:dprint"]
 description = "Format JSON, Markdown, TOML, YAML (dprint)"
 run = "dprint fmt"
 
@@ -24,19 +50,48 @@ run = "dprint fmt"
 
 [tasks.check]
 alias = "c"
-description = "Run all static checks"
-depends = ["check:format", "check:leaks", "check:frontmatter"]
+description = "Run all static checks in parallel"
+depends = [
+  "check:actions",
+  "check:format",
+  "check:frontmatter",
+  "check:leaks",
+  "check:scan",
+  "check:skills",
+]
+
+[tasks."check:actions"]
+description = "Lint and audit GitHub Actions workflows (actionlint + zizmor)"
+run = ["actionlint", "zizmor --offline .github/workflows/"]
 
 [tasks."check:format"]
 description = "Check formatting of JSON, Markdown, TOML, YAML (dprint)"
 run = "dprint check"
 
 [tasks."check:leaks"]
-description = "Audit git history for leaked secrets (gitleaks)"
-run = "gitleaks git --verbose"
+description = "Audit recent commits for leaked secrets (gitleaks)"
+# Only the newest commits, so hooks and push CI stay fast on a growing history. The
+# full-history pass lives in `.github/workflows/security.yml`, on a weekly schedule.
+run = 'gitleaks git --log-opts="--max-count=100" --verbose'
+
+[tasks."check:scan"]
+description = "Scan the checkout for misconfigurations, secrets, and licenses (trivy)"
+# `--config` is explicit on purpose: without it a `TRIVY_CONFIG` exported in the user's
+# shell silently wins over the policy committed here, and the repository's own rules
+# never run. `fs` (not `config`) is what actually enables every scanner in trivy.yaml.
+run = "trivy --config trivy.yaml fs ."
+
+[tasks."check:skills"]
+description = "Validate every skill against the Agent Skills specification (gh skill)"
+# The publishing gate itself, run without publishing: it rejects an invalid skill name, a
+# name that disagrees with its folder, missing required frontmatter, and install metadata
+# leaked into a committed SKILL.md. A missing `license` is only a warning, so this task
+# cannot replace `check:frontmatter` — it complements it.
+run = "gh skill publish --dry-run ."
 
 [tasks."check:frontmatter"]
 description = "Assert each SKILL.md frontmatter name is slug-cased and matches its folder"
+# The offline floor: no network, no `gh`, no GitHub account, and it names the exact file.
 run = """
 status=0
 for dir in mlops-*/; do
